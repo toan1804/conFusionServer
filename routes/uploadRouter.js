@@ -2,6 +2,7 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const authenticate = require('../authenticate');
 const multer = require('multer');
+const cors = require('./cors');
 
 //* Note: The multer middleware is used to parse the form data.
 // cb is a callback function that is called when the file has been uploaded.
@@ -32,7 +33,8 @@ uploadRouter.use(bodyParser.json());
 //* Note: the `post` method is used to upload the image.
 //* The `upload.single()` method is used to upload a single file, `imageFile` is the name of the form field.
 uploadRouter.route('/')
-.get(authenticate.verifyUser, authenticate.verifyAdmin, (req, res, next) => {
+.options(cors.corsWithOptions, (req, res) => {res.sendStatus(200);})
+.get(cors.cors, authenticate.verifyUser, authenticate.verifyAdmin, (req, res, next) => {
     res.statusCode = 403;
     res.end('GET operation not supported on /imageUpload');
 })
